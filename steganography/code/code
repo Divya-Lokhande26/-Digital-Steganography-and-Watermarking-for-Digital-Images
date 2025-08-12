@@ -1,0 +1,74 @@
+import cv2
+import string
+import os
+from tkinter import filedialog
+from tkinter import Tk
+
+d = {}
+c = {}
+
+for i in range(255):
+    d[chr(i)] = i
+    c[i] = chr(i)
+
+root = Tk()
+root.withdraw()  # Hide the main window
+
+# Ask user to select an image file
+image_path = filedialog.askopenfilename(initialdir="/Desktop", title="Select Image File",
+                                        filetypes=(("JPEG files", "*.jpg"), ("PNG files", "*.png"), ("All files", "*.*")))
+if not image_path:
+    print("No image selected. Exiting.")
+    exit()
+
+x = cv2.imread(image_path)
+i = x.shape[0]
+j = x.shape[1]
+print("Image dimensions:", i, j)
+
+key = input("Enter key to edit (Security Key): ")
+text = input("Enter text to hide: ")
+
+kl = 0
+tln = len(text)
+z = 0  # decides plane
+n = 0  # number of row
+m = 0  # number of column
+
+l = len(text)
+
+for i in range(l):
+    x[n, m, z] = d[text[i]] ^ d[key[kl]]
+    n = n + 1
+    m = m + 1
+    m = (m + 1) % 3
+    kl = (kl + 1) % len(key)
+
+cv2.imwrite("encrypted_img.jpg", x)
+os.startfile("encrypted_img.jpg")
+print("Data hiding in image completed successfully.")
+
+kl = 0
+tln = len(text)
+z = 0  # decides plane
+n = 0  # number of row
+m = 0  # number of column
+
+ch = int(input("\nEnter 1 to extract data from image: "))
+
+if ch == 1:
+    key1 = input("\nRe-enter key to extract text: ")
+    decrypt = ""
+
+    if key == key1:
+        for i in range(l):
+            decrypt += c[x[n, m, z] ^ d[key[kl]]]
+            n = n + 1
+            m = m + 1
+            m = (m + 1) % 3
+            kl = (kl + 1) % len(key)
+        print("Encrypted text was:", decrypt)
+    else:
+        print("Keys don't match.")
+else:
+    print("Thank you. Exiting.")
