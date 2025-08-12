@@ -1,0 +1,23 @@
+
+# Link to download Visual Studio Code
+
+https://code.visualstudio.com/download
+
+# Link to Download Python Jupyter in VS Code
+
+https://code.visualstudio.com/docs/datascience/jupyter-notebooks
+
+After downloading the installer, install Python with default settings.
+Image from Python.org. ...
+Image from Anaconda. ...
+Image from Visual Studio Code. ...
+Create a new file. ...
+Save Python file. ...
+Select the interpreter. ...
+Run a Python file. ...
+Install VSCode Python extension.
+
+1)  Python Environment
+
+2)  Python Installer
+     ......etc
