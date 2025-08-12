@@ -1,0 +1,113 @@
+import cv2
+import os
+import numpy as np
+import random
+import tkinter as tk
+from tkinter import filedialog
+
+# This is the desktop path
+desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+
+# Path to the folder containing the images
+folder_path = os.path.join(desktop_path, "project")
+
+# Check if the folder exists
+if not os.path.exists(folder_path):
+    print("Folder 'project' not found on the desktop.")
+    exit()
+
+# Create a Tkinter root window
+root = tk.Tk()
+root.withdraw()  # Hide the root window
+
+# Ask user to select two image files from the folder
+file_paths = filedialog.askopenfilenames(title="Select two image files from 'project' folder",
+                                         initialdir=folder_path,
+                                         filetypes=[("Image files", "*.jpg; *.jpeg; *.png; *.bmp")])
+
+# Check if files were selected
+if len(file_paths) != 2:
+    print("Please select exactly two image files.")
+else:
+    # Load the two selected images
+    img1 = cv2.imread(file_paths[0])
+    img2 = cv2.imread(file_paths[1])
+
+    # Check if images were successfully loaded
+    if img1 is None:
+        print(f"Error: Could not open or read '{file_paths[0]}'")
+    elif img2 is None:
+        print(f"Error: Could not open or read '{file_paths[1]}'")
+    else:
+        print("Images loaded successfully")
+
+        # Display the input images
+        cv2.imshow("Input Image ", img1)
+        cv2.imshow("Image to be Hidden", img2)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+        # Encryption function
+        def encrypt():
+            # Resize img2 to match the dimensions of img1
+            img2_resized = cv2.resize(img2, (img1.shape[1], img1.shape[0]))
+
+            for i in range(img1.shape[0]):
+                for j in range(img1.shape[1]):
+                    for l in range(3):
+                        v1 = format(img1[i][j][l], '08b')
+                        v2 = format(img2_resized[i][j][l], '08b')
+
+                        v3 = v1[:4] + v2[:4]
+
+                        img1[i][j][l] = int(v3, 2)
+
+            cv2.imwrite('encrypted_image.png', img1)
+            print("Encryption completed successfully.")
+
+            # Display the encrypted image
+            cv2.imshow("Encrypted Image", img1)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+        # Decryption function
+        def decrypt():
+            img = cv2.imread('encrypted_image.png')
+            width = img.shape[0]
+            height = img.shape[1]
+
+            img1 = np.zeros((width, height, 3), np.uint8)
+            img2 = np.zeros((width, height, 3), np.uint8)
+
+            for i in range(width):
+                for j in range(height):
+                    for l in range(3):
+                        v1 = format(img[i][j][l], '08b')
+                        v2 = v1[:4] + chr(random.randint(0, 1) + 48) * 4
+                        v3 = v1[4:] + chr(random.randint(0, 1) + 48) * 4
+
+                        img1[i][j][l] = int(v2, 2)
+                        img2[i][j][l] = int(v3, 2)
+
+            cv2.imwrite('Extracted Input Image.png', img1)
+            cv2.imwrite('Hidden Image2.png', img2)
+            print("Decryption completed successfully.")
+
+            # Display the decrypted images
+            cv2.imshow("Extracted Input Image", img1)
+            cv2.imshow("Hidden Image2", img2)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+        # Perform encryption
+        encrypt()
+
+        # Perform decryption
+        decrypt()
+
+# Close the Tkinter root window
+root.destroy()
+
+
+
+
