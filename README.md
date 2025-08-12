@@ -29,4 +29,3 @@ The goal is to provide a secure, efficient, and user-friendly system for hiding 
 
 ---
 
-## 📂 Project Structure
